@@ -2,7 +2,11 @@ module Footnotes
   module Notes
     class SessionNote < AbstractNote
       def initialize(controller)
-        session = controller.session
+        @controller = controller
+      end
+      
+      def after
+        session = @controller.session
         if session
           if session.respond_to? :to_hash
             # rails >= 2.3

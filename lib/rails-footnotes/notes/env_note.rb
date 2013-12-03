@@ -2,7 +2,11 @@ module Footnotes
   module Notes
     class EnvNote < AbstractNote
       def initialize(controller)
-        @env = controller.request.env.dup
+        @controller = controller
+      end
+
+      def after
+        @env = @controller.request.env.dup
       end
 
       def content

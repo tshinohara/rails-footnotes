@@ -3,6 +3,7 @@ module Footnotes
     @@no_style = false
     @@multiple_notes = false
     @@klasses = []
+    @@instances = []
 
     # Default link prefix is textmate
     @@prefix = 'txmt://open?url=file://%s&amp;line=%d&amp;column=%d'
@@ -29,10 +30,14 @@ module Footnotes
         self.each_with_rescue(Footnotes.before_hooks) {|hook| hook.call(controller, self)}
 
         @@klasses = []
+        @@instances = []
         self.each_with_rescue(@@notes.flatten) do |note|
           klass = "Footnotes::Notes::#{note.to_s.camelize}Note".constantize
           klass.start!(controller) if klass.respond_to?(:start!)
           @@klasses << klass
+          note = klass.new(@controller)
+          note.start if note.respond_to?(:start)
+          @@instances << note
         end
       end
 
@@ -71,7 +76,12 @@ module Footnotes
     # This method allows this kind of work
     #
     def close!(controller)
-      self.each_with_rescue(@@klasses) {|klass| klass.close!(controller)}
+      self.each_with_rescue(@@klasses) {|klass|
+        klass.close!(controller)
+      }
+      self.each_with_rescue(@@instances) {|note|
+        note.close if note.respond_to?(:close)
+      }
       self.each_with_rescue(Footnotes.after_hooks) {|hook| hook.call(controller, self)}
     end
 
@@ -88,10 +98,10 @@ module Footnotes
       end
 
       def initialize_notes!
-        each_with_rescue(@@klasses) do |klass|
-          note = klass.new(@controller)
+        each_with_rescue(@@instances) do |note|
+          note.after if note.respond_to?(:after)
           @notes << note if note.respond_to?(:valid?) && note.valid?
-        end
+        end        
       end
 
       def revert_pos(file)

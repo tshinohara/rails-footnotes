@@ -3,6 +3,9 @@ module Footnotes
     class FiltersNote < AbstractNote
       def initialize(controller)
         @controller = controller
+      end
+
+      def after
         @parsed_filters = parse_filters
       end
 

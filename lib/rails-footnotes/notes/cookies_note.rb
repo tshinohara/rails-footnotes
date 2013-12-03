@@ -2,7 +2,11 @@ module Footnotes
   module Notes
     class CookiesNote < AbstractNote
       def initialize(controller)
-        @cookies = controller.request.cookies
+        @controller = controller
+      end
+
+      def after
+        @cookies = @controller.request.cookies        
       end
 
       def title

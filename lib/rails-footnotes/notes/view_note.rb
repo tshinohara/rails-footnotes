@@ -3,7 +3,10 @@ module Footnotes
     class ViewNote < AbstractNote
       def initialize(controller)
         @controller = controller
-        @template = controller.instance_variable_get(:@template)
+      end
+
+      def after
+        @template = @controller.instance_variable_get(:@template)
       end
 
       def row

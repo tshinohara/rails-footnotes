@@ -2,7 +2,11 @@ module Footnotes
   module Notes
     class FilesNote < AbstractNote
       def initialize(controller)
-        @files = scan_text(controller.response.body)
+        @controller = controller
+      end
+
+      def after
+        @files = scan_text(@controller.response.body)
         parse_files!
       end
 

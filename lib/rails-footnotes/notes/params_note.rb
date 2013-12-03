@@ -2,7 +2,11 @@ module Footnotes
   module Notes
     class ParamsNote < AbstractNote
       def initialize(controller)
-        @params = controller.params.symbolize_keys
+        @controller = controller
+      end
+
+      def after
+        @params = @controller.params.symbolize_keys
       end
 
       def title

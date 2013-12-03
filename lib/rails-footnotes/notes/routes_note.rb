@@ -3,7 +3,10 @@ module Footnotes
     class RoutesNote < AbstractNote
       def initialize(controller)
         @controller = controller
-        @parsed_routes = parse_routes
+      end
+
+      def after
+        @parsed_routes = parse_routes        
       end
 
       def legend

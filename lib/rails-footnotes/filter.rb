@@ -36,7 +36,6 @@ module Footnotes
           klass.start!(controller) if klass.respond_to?(:start!)
           @@klasses << klass
           note = klass.new(controller)
-          note.start if note.respond_to?(:start)
           @@instances << note
         end
       end

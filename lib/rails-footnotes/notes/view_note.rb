@@ -3,10 +3,19 @@ module Footnotes
     class ViewNote < AbstractNote
       def initialize(controller)
         @controller = controller
+        subscribe!
       end
 
-      def after
-        @template = @controller.instance_variable_get(:@template)
+      def subscribe!
+        @subscriber = ActiveSupport::Notifications.subscribe(
+          'render_template.action_view') do |*args|
+          event = ActiveSupport::Notifications::Event.new(*args)
+          @template = event.data[:identifier]
+        end
+      end
+
+      def close
+        ActiveSupport::Notifications.unsubscribe @subscriber
       end
 
       def row
@@ -14,23 +23,12 @@ module Footnotes
       end
 
       def link
-        escape(Footnotes::Filter.prefix(filename, 1, 1))
+        escape(Footnotes::Filter.prefix(@template, 1, 1))
       end
 
       def valid?
-        prefix? && first_render?
+        @template
       end
-
-      protected
-
-        def first_render?
-          @template.instance_variable_get(:@_first_render)
-        end
-
-        def filename
-          @filename ||= @template.instance_variable_get(:@_first_render).filename
-        end
-
     end
   end
 end

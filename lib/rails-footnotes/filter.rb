@@ -35,7 +35,7 @@ module Footnotes
           klass = "Footnotes::Notes::#{note.to_s.camelize}Note".constantize
           klass.start!(controller) if klass.respond_to?(:start!)
           @@klasses << klass
-          note = klass.new(@controller)
+          note = klass.new(controller)
           note.start if note.respond_to?(:start)
           @@instances << note
         end

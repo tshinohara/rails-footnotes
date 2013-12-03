@@ -10,7 +10,7 @@ module Footnotes
         @subscriber = ActiveSupport::Notifications.subscribe(
           'render_template.action_view') do |*args|
           event = ActiveSupport::Notifications::Event.new(*args)
-          @template = event.data[:identifier]
+          @template = event.payload[:identifier]
         end
       end
 
